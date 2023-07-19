@@ -1,3 +1,5 @@
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+
 export default function Header() {
   return (
     <nav id="header" className="w-full z-30 top-0 text-white py-1 lg:py-6">
@@ -64,12 +66,7 @@ export default function Header() {
               </a>
             </li>
           </ul>
-          <button
-            id="navAction"
-            className="mx-auto lg:mx-0 hover:underline text-gray-800 font-extrabold rounded mt-4 lg:mt-0 py-4 px-8 shadow opacity-75"
-          >
-            Action
-          </button>
+          <ConnectButton />
         </div>
       </div>
     </nav>
