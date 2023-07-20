@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import truthABI from "@/contracts/truth-abi.json"
 import { CONTRACT_ADDRESS } from "@/constants"
 import { readContract } from "@wagmi/core"
+import { watchReadContract } from "@wagmi/core"
 
 import { useAccount, useContractRead, useContractWrite } from "wagmi"
 import { TruthCard } from "@/components/TruthCard"
@@ -15,17 +16,27 @@ const truthContract: Record<string, any> = {
 
 export default function Home() {
   const { address } = useAccount()
+  const [tokenURI, setTokenURI] = useState("")
   const [tokenId, setTokenId] = useState({
     name: "",
     description: "",
     image: "",
   })
 
-  const { data, isLoading } = useContractRead({
-    ...truthContract,
-    functionName: "tokenURI",
-    args: [0],
-  })
+  watchReadContract(
+    {
+      address: CONTRACT_ADDRESS,
+      abi: truthABI,
+      functionName: "tokenURI",
+      args: [0],
+      listenToBlock: true,
+    },
+    (_tokenURI) => {
+      _tokenURI &&
+        _tokenURI.toString() !== tokenURI &&
+        setTokenURI(_tokenURI.toString())
+    }
+  )
 
   const { write: speakTheTruth } = useContractWrite({
     ...truthContract,
@@ -51,9 +62,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (isLoading || !data) return
+    if (!tokenURI.length) return
 
-    fetch(data.toString())
+    fetch(tokenURI)
       .then((res) => res.json())
       .then((respData) => setTokenId(respData))
 
@@ -64,7 +75,7 @@ export default function Home() {
     // }
 
     // https://www.fakejson.online/api/json?name=Truth&description=MussinaBoy&image=https://fakeimg.pl/500x500/?text=MussinaBoy
-  }, [isLoading, data])
+  }, [tokenURI])
 
   return (
     <main className="gradient leading-relaxed tracking-wide flex flex-col">
