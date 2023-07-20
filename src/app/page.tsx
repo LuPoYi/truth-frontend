@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import truthABI from "@/contracts/truth-abi.json"
 import { CONTRACT_ADDRESS } from "@/constants"
 import { readContract } from "@wagmi/core"
@@ -8,15 +8,20 @@ import { watchReadContract } from "@wagmi/core"
 
 import { useAccount, useContractRead, useContractWrite } from "wagmi"
 import { TruthCard } from "@/components/TruthCard"
+import toast, { Toaster } from "react-hot-toast"
 
 const truthContract: Record<string, any> = {
   address: CONTRACT_ADDRESS,
   abi: truthABI,
 }
 
+const notifyTruthChanged = () => toast.success("The Truth Changed!")
+
 export default function Home() {
   const { address } = useAccount()
+  const isFirstRender = useRef(true)
   const [tokenURI, setTokenURI] = useState("")
+  const [ownerOf, setOwnerOf] = useState("")
   const [tokenId, setTokenId] = useState({
     name: "",
     description: "",
@@ -32,13 +37,26 @@ export default function Home() {
       listenToBlock: true,
     },
     (_tokenURI) => {
-      _tokenURI &&
-        _tokenURI.toString() !== tokenURI &&
+      if (_tokenURI && _tokenURI.toString() !== tokenURI) {
+        const fetchOwnerOf = async () => {
+          const _ownerOf = await readContract({
+            address: CONTRACT_ADDRESS,
+            abi: truthABI,
+            functionName: "ownerOf",
+            args: [0],
+          })
+
+          setOwnerOf(String(_ownerOf))
+        }
+
+        fetchOwnerOf()
+
         setTokenURI(_tokenURI.toString())
+      }
     }
   )
 
-  const { write: speakTheTruth } = useContractWrite({
+  const { write: speakTheTruth, isSuccess } = useContractWrite({
     ...truthContract,
     functionName: "SpeakTheTruth",
   })
@@ -64,17 +82,13 @@ export default function Home() {
   useEffect(() => {
     if (!tokenURI.length) return
 
+    isFirstRender.current
+      ? (isFirstRender.current = false)
+      : notifyTruthChanged()
+
     fetch(tokenURI)
       .then((res) => res.json())
       .then((respData) => setTokenId(respData))
-
-    //   {
-    //     "name": "Truth",
-    //     "description": "MussinaBoy",
-    //     "image": "https://fakeimg.pl/500x500/?text=MussinaBoy"
-    // }
-
-    // https://www.fakejson.online/api/json?name=Truth&description=MussinaBoy&image=https://fakeimg.pl/500x500/?text=MussinaBoy
   }, [tokenURI])
 
   return (
@@ -84,10 +98,12 @@ export default function Home() {
           tokenId={0}
           description={tokenId.description}
           imageURL={tokenId.image}
+          ownerOf={ownerOf}
           toAddress={address}
           onClick={handleSpeakTheTruthOnClick}
         />
       </div>
+      <Toaster />
     </main>
   )
 }

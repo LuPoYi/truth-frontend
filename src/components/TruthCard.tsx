@@ -8,6 +8,7 @@ interface TruthCardProps {
   tokenId: number
   description: string
   imageURL: string
+  ownerOf: string
   toAddress?: string
   onClick: (tokenId: number, toAddress: string, text: string) => void
 }
@@ -16,12 +17,11 @@ export function TruthCard({
   tokenId,
   description,
   imageURL,
+  ownerOf,
   toAddress,
   onClick,
 }: TruthCardProps) {
   const [text, setText] = useState("")
-  const inputRef = useRef<HTMLInputElement>(null)
-  const { address } = useAccount()
   const { chain } = useNetwork()
 
   return (
@@ -47,6 +47,19 @@ export function TruthCard({
           <small>Truth:</small> {description}
         </div>
 
+        {ownerOf.length > 0 && (
+          <div className="text-lg text-gray-600 p-4 font-primary font-light">
+            NFT Owner:
+            <a
+              href={`${chain?.blockExplorers?.default.url}/address/${ownerOf}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {`${ownerOf.slice(0, 6)}...${ownerOf.slice(-4)}`}
+            </a>
+          </div>
+        )}
+
         <div
           className="text-palette-dark font-primary font-medium text-base absolute bottom-0 right-0 mb-4 pl-4 pr-4 pb-1 pt-2 bg-palette-lighter 
             rounded-tl-sm triangle"
@@ -56,7 +69,6 @@ export function TruthCard({
               <input
                 className="appearance-none bg-transparent border-none w-full text-gray-700 placeholder-gray-300 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 type="text"
-                ref={inputRef}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Your Truth"
               />
@@ -66,9 +78,7 @@ export function TruthCard({
                 type="button"
                 disabled={!(toAddress && text.length)}
                 onClick={() =>
-                  toAddress &&
-                  inputRef.current &&
-                  onClick(tokenId, toAddress, text)
+                  toAddress && text.length && onClick(tokenId, toAddress, text)
                 }
               >
                 Speak The Truth
