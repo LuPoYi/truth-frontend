@@ -17,6 +17,9 @@ export default function Footer() {
               </svg>
               Truth App
             </a>
+            <p className="text-gray-500 mt-2">
+              v{process.env.npm_package_version}
+            </p>
           </div>
 
           <div className="flex-1">
