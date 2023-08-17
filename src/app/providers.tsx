@@ -15,10 +15,18 @@ import {
   trustWallet,
 } from "@rainbow-me/rainbowkit/wallets"
 import { publicProvider } from "wagmi/providers/public"
+import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [sepolia],
-  [publicProvider()]
+  // [publicProvider()]
+  [
+    jsonRpcProvider({
+      rpc: () => ({
+        http: `https://eth-sepolia.public.blastapi.io`,
+      }),
+    }),
+  ]
 )
 
 // wallet connect 0xCafe

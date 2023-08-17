@@ -1,14 +1,15 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import truthABI from "@/contracts/truth-abi.json"
-import { CONTRACT_ADDRESS } from "@/constants"
-import { readContract } from "@wagmi/core"
-import { watchReadContract } from "@wagmi/core"
 
-import { useAccount, useContractRead, useContractWrite } from "wagmi"
+import { CONTRACT_ADDRESS } from "@/constants"
 import { TruthCard } from "@/components/TruthCard"
+import { readContract, watchReadContract } from "@wagmi/core"
 import toast, { Toaster } from "react-hot-toast"
+import truthABI from "@/contracts/truth-abi.json"
+import { useAccount, useContractRead, useContractWrite } from "wagmi"
+
+const TOKEN_ID = 1
 
 const truthContract: Record<string, any> = {
   address: CONTRACT_ADDRESS,
@@ -33,7 +34,7 @@ export default function Home() {
       address: CONTRACT_ADDRESS,
       abi: truthABI,
       functionName: "tokenURI",
-      args: [0],
+      args: [TOKEN_ID],
       listenToBlock: true,
     },
     (_tokenURI) => {
@@ -43,7 +44,7 @@ export default function Home() {
             address: CONTRACT_ADDRESS,
             abi: truthABI,
             functionName: "ownerOf",
-            args: [0],
+            args: [TOKEN_ID],
           })
 
           setOwnerOf(String(_ownerOf))
@@ -95,11 +96,10 @@ export default function Home() {
     <main className="gradient leading-relaxed tracking-wide flex flex-col">
       <div className="container mx-auto h-screen">
         <TruthCard
-          tokenId={0}
+          tokenId={TOKEN_ID}
           description={tokenId.description}
           imageURL={tokenId.image}
           ownerOf={ownerOf}
-          toAddress={address}
           onClick={handleSpeakTheTruthOnClick}
         />
       </div>
