@@ -7,7 +7,7 @@ import { TruthCard } from "@/components/TruthCard"
 import { readContract, watchReadContract } from "@wagmi/core"
 import toast, { Toaster } from "react-hot-toast"
 import truthABI from "@/contracts/truth-abi.json"
-import { useAccount, useContractRead, useContractWrite } from "wagmi"
+import { useAccount, useContractWrite, useBalance } from "wagmi"
 
 const TOKEN_ID = 1
 
@@ -23,10 +23,18 @@ export default function Home() {
   const isFirstRender = useRef(true)
   const [tokenURI, setTokenURI] = useState("")
   const [ownerOf, setOwnerOf] = useState("")
+  const [tvl, setTvl] = useState(0)
   const [tokenId, setTokenId] = useState({
     name: "",
     description: "",
     image: "",
+  })
+
+  const { data, isLoading } = useBalance({
+    address: CONTRACT_ADDRESS,
+    formatUnits: "ether",
+    watch: true,
+    cacheTime: 5_000,
   })
 
   watchReadContract(
@@ -95,6 +103,7 @@ export default function Home() {
   return (
     <main className="gradient leading-relaxed tracking-wide flex flex-col">
       <div className="container mx-auto h-screen">
+        {!isLoading && <div className="123">TVL: {data?.formatted} ETH</div>}
         <TruthCard
           tokenId={TOKEN_ID}
           description={tokenId.description}
@@ -103,6 +112,9 @@ export default function Home() {
           onClick={handleSpeakTheTruthOnClick}
         />
       </div>
+      <br />
+
+      <br />
       <Toaster />
     </main>
   )
