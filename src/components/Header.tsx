@@ -1,4 +1,4 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function Header() {
   return (
@@ -41,7 +41,7 @@ export default function Header() {
           id="nav-content"
         >
           <ul className="list-reset lg:flex justify-end flex-1 items-center">
-            <li className="mr-3">
+            {/* <li className="mr-3">
               <a
                 className="inline-block py-2 px-4 text-black font-bold no-underline"
                 href="#"
@@ -64,7 +64,7 @@ export default function Header() {
               >
                 link
               </a>
-            </li>
+            </li> */}
           </ul>
           <ConnectButton />
         </div>

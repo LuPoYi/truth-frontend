@@ -4,8 +4,8 @@ import "@rainbow-me/rainbowkit/styles.css"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
 import { Inter } from "next/font/google"
-import { Providers } from "./providers"
 import type { Metadata } from "next"
+import { Providers } from "./providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -26,7 +26,7 @@ export default function RootLayout({
           <div className="gradient leading-relaxed tracking-wide flex flex-col">
             <Header />
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </Providers>
       </body>

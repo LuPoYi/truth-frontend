@@ -1,9 +1,9 @@
-import { useRef, useState } from "react"
-import { isAddress } from "viem"
+import { useRef, useState } from 'react';
 
-import Image from "next/image"
-import { OPENSEA_URL } from "@/constants"
-import { useAccount, useNetwork } from "wagmi"
+import Image from 'next/image';
+import { OPENSEA_URL } from '@/constants';
+import { isAddress } from 'viem';
+import { useAccount, useNetwork } from 'wagmi';
 
 interface TruthCardProps {
   tokenId: number
@@ -51,7 +51,7 @@ export function TruthCard({
         </div>
 
         {ownerOf.length > 0 && (
-          <div className="text-lg text-gray-600 p-4 font-primary font-light">
+          <div className="text-lg text-palette-primary p-4 font-primary font-light">
             NFT Owner:
             <a
               href={`${chain?.blockExplorers?.default.url}/address/${ownerOf}`}
